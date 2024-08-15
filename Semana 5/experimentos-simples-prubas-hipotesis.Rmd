@@ -1,0 +1,155 @@
+---
+title: "Pruebas de Hipótesis para $\\mu$"
+author: "willandru"
+date: "2024-08-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Experimentos simples: Un factor con dos Niveles - Ejercicios
+
+
+### 1. Análisis de Vida Media de Focos - Varianza poblacional conocida
+
+Un gerente de control de calidad de una fábrica de focos debe determinar si la vida media de un gran lote de focos es igual al valor especificado de 375 horas. La desviación estándar de la población es 100 horas. Una muestra compuesta por 64 focos indica una vida media muestral de 350 horas.
+
+Con un nivel de significancia de 5%, ¿existe evidencia de que la vida media es distinta de 375 horas?
+
+#### Hipótesis
+
+- \( H_0: \mu = 375 \)
+- \( H_1: \mu \neq 375 \)
+
+
+```{r }
+alpha <-0.05
+xprom<- 350
+sigma <- 100
+n <- 64
+miu<-375
+
+Z <- (xprom-miu)/(sigma/sqrt(n))
+
+q1<-qnorm(alpha/2, lower.tail=FALSE)
+q2<-qnorm(alpha/2)
+(Z < q2 )|| (Z >q1)
+
+```
+
+```{r }
+p<-pnorm(Z)
+p*2 < alpha
+```
+
+### 2. Análisis de Tiempo de Entrega de Paquetes - Varianza poblacional desconocida
+
+Una empresa de servicio postal garantiza a su empresa que puede reducir el tiempo promedio necesario para recibir un paquete a menos de 2.5 días, que es lo que usted experimenta actualmente. Después de utilizar la nueva compañía en 17 ocasiones, el tiempo de entrega promedio fue de 2.2 días y la desviación estándar fue de 0.9 días. 
+
+¿Debería cambiar su firma a la nueva empresa de mensajería? Sea \( \alpha = 1\% \).
+
+#### Hipótesis
+
+- \( H_0: \mu \geq 2.5 \)
+- \( H_1: \mu < 2.5 \)
+
+
+```{r }
+alpha <-0.01
+xprom<- 2.2
+S <- 0.9
+n <- 17
+miu<-2.5
+
+t<-(xprom-miu)/(S/sqrt(n))
+q<-qt(alpha, n-1)
+
+t<q
+```
+```{r }
+alpha >pt(t,n-1)
+```
+
+### 3. Análisis de Resistencia a la Ruptura de una Fibra - Varianza poblacional conocida
+ 
+Se requiere que la resistencia a la ruptura de una fibra sea de por lo menos 150 psi. La experiencia pasada indica que la desviación estándar de la resistencia a la ruptura es 3 psi. Se prueba una muestra aleatoria de cuatro ejemplares de prueba, y los resultados son \( y_1 = 145 \), \( y_2 = 153 \), \( y_3 = 150 \) y \( y_4 = 147 \).
+
+a) Enunciar las hipótesis que el lector considere que deberían probarse en este experimento.
+
+b) Probar estas hipótesis utilizando \( \alpha = 0.05 \). ¿A qué conclusiones se llega?
+
+c) Construir un intervalo de confianza del 95% para la resistencia a la ruptura promedio.
+
+#### Hipótesis
+
+- \( H_0: \mu \leq 150 \) (La resistencia a la ruptura promedio es menor o igual a 150 psi)
+- \( H_1: \mu > 150 \) (La resistencia a la ruptura promedio es mayor que 150 psi)
+
+```{r }
+sigma<-3
+miu<-150
+Y<-c(145,153,150,147)
+xbarra<-mean(Y)
+alpha<-0.05
+n<-4
+
+Z <- (xbarra-miu)/(sigma/sqrt(n))
+q<-qnorm(alpha, lower.tail = FALSE)
+Z>q
+```
+```{r }
+alpha > pnorm(Z, lower.tail = FALSE)
+```
+```{r }
+upper<- xbarra + qnorm(alpha/2)*sigma/sqrt(n)
+lower<- xbarra - qnorm(alpha/2)*sigma/sqrt(n)
+print(paste("El intervalo de confianza es [", round(upper), ",", round(lower),"]"))
+```
+
+### 4. Análisis de la Vida de Anaquel de una Bebida Carbonatada - Varianza poblacional desconocida
+
+a) Quiere demostrarse que la vida media de anaquel excede los 120 días. Establecer las hipótesis apropiadas para investigar esta afirmación.
+
+b) Probar estas hipótesis utilizando α = 0.01. ¿A qué conclusiones se llega?
+
+c) Encontrar el valor P para la prueba del inciso b.
+
+d) Construir un intervalo de confianza de 99% para la vida media de anaquel.
+
+#### Hipótesis
+
+- \( H_0: \mu \leq 120 \) (La vida media de anaquel es menor o igual a 120 días)
+- \( H_1: \mu > 120 \) (La vida media de anaquel excede los 120 días)
+
+```{r }
+n<-10
+x<-c(108,138,124,163,124,159,106,134,115,139)
+xbarra<-mean(x)
+s<-sd(x)
+miu<-120
+alpha<-0.01
+```
+```{r }
+n<-10
+x<-c(108,138,124,163,124,159,106,134,115,139)
+xbarra<-mean(x)
+s<-sd(x)
+miu<-120
+alpha<-0.01
+
+#estadistico de prueba : t-student
+t<-(xbarra-miu)/(s/sqrt(n))
+#grados de librertad: n-1
+q<-qt(alpha, n-1, lower.tail = FALSE)
+t>q
+```
+
+```{r }
+alpha >pt(t,n-1)
+```
+
+```{r }
+t.test(x, alternative = "greater", mu=120, conf.level = 0.99)
+```
