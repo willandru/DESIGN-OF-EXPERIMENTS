@@ -112,3 +112,65 @@ residuales <- anova$residuals
 qqnorm(residuales)
 qqline(residuales)
 shapiro.test(residuales) # Residuales son normales
+
+
+#EJERCICIO 2
+
+# En un artículo de Journal of Quality Technology (vol. 13, no. 2, pp. 111-114) 
+#se describe un experimento para investigar los efectos de cuatro sustancias químicas
+#blanqueadoras sobre la brillantez de la pulpa. Estas cuatro sustancias químicas se
+#seleccionaron al azar de una población grande de agentes blanqueadores potenciales. 
+#Los datos se encuentran en el archivo de Excel adjunto (E2).
+
+#a) ¿Existe alguna diferencia en los tipos de sustancias químicas? Utilizarás un
+#nivel de significancia de 𝛼=  0.05
+datos<- read_excel("datos_anova.xlsx", sheet='E2')
+datos
+str(datos)
+datos<- as.data.frame(t(datos))
+str(datos)
+datos
+#b) Estimar la variabilidad debida al tipo de sustancias químicas.
+
+#c) Estimar la variabilidad debida al error aleatorio.
+
+#d) Analizar los residuales de este experimento y comentar la adecuación del modelo.
+
+
+
+#Ejercicio 3 – Efectos Fijos
+
+#Se estudia la resistencia a la tensión del cemento Portland. Puedes usar económicamente
+#cuatro diferentes técnicas de mezclado. Se han colectado los datos adjuntos en el archivo Excel (E3).
+
+#a) Probar la hipótesis de que las técnicas de mezclado afectan la resistencia del cemento.
+#Utiliza un nivel de significancia de α=0.05.
+
+#b) Usa el método de Tukey con α=0.05 para hacer comparaciones entre pares de medias.
+
+#c) Construir un gráfico de probabilidad normal de los residuales. ¿Qué conclusiones
+#se pueden sacar acerca de la validez del supuesto de normalidad?
+  
+#d) Graficar los residuales contra la resistencia a la tensión predicha. Comentar la gráfica.
+
+
+
+
+#Ejercicio 4 – Prueba de Hipótesis
+
+#A continuación, se presenta el tiempo de combustión de dos cohetes químicos con
+#formulaciones diferentes. Los ingenieros de diseño están interesados tanto en la
+#media como en la varianza del tiempo de combustión. Los datos se encuentran en el
+#archivo Excel adjunto (E4).
+
+#a) Probar la hipótesis de que las dos varianzas son iguales. Utiliza un nivel de
+#significancia de α=0.05.
+
+#b) Utilizando los resultados del inciso (a), probar la hipótesis de que los tiempos
+#de combustión promedio son iguales. Utiliza un nivel de significancia de α=0.05.
+#¿Cuál es el valor p para esta prueba?
+  
+#c) Comentar el papel del supuesto de normalidad en este problema.
+#Verificar el supuesto de normalidad para ambos tipos de cohetes.
+
+
