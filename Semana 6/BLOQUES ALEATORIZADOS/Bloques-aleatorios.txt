@@ -1,0 +1,24 @@
+
+
+Bloques Aletorizados:
+
+
+variable respuesta
+
+
+factores, me estresan me afecta la respuesta, quiero mediciones de estos factores
+
+factores perturbadores , 
+
+++ desconocidos y no controlables : Aleatorización 
+
+++ conocidos pero no controlables: Analisis de covarianzas
+
+++ conocidos y controlables: Formacion de bloques 
+
+CONOCIDOS Y CONTROLABLES -> Formacion de un bloques
+
+
+numero de factores l
+
+
