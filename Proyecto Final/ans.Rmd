@@ -1,0 +1,223 @@
+---
+title: "Reporte de análisis y resultados del experimento sobre brillo y tiempo de exposición"
+author: "willandru"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Los datos cargados incluyen dos factores principales:
+
+- **A_brillo** (Brillo: 1 = Alto, 0 = Bajo)
+- **B_tiempo** (Tiempo: 1 = 45 minutos, 0 = 1 hora)
+La variable respuesta, **vr_diametro**, representa el cambio en el diámetro pupilar al final del experimento respecto al inicio. Los valores indican cambios negativos (contracción) o positivos (dilatación).
+
+```{r datos_diametro}
+# Cargar datos
+datos_diametro <- read.csv("datos_diametro.csv")
+print(datos_diametro)
+A <- datos_diametro$A_brillo
+B <- datos_diametro$B_tiempo
+r <- datos_diametro$vr_diametro
+```
+
+# Análisis de varianza (ANOVA)
+El análisis de varianza examina el impacto de los factores A_brillo y B_tiempo, así como su interacción, en la variable respuesta (vr_diametro).
+```{r}
+
+av <- aov(r ~ A * B, data = datos_diametro)
+summary(av)
+```
+
+### Interpretación de Resultados
+
+**Efecto Principal de A (Brillo)**
+El brillo (**A_brillo**) muestra un efecto altamente significativo (\(p = 8.22 \times 10^{-5}\)). Esto indica que los niveles de brillo, ya sea alto o bajo, influyen de manera clara y contundente en el cambio del diámetro pupilar. En términos prácticos, el brillo es un factor determinante en la respuesta pupilar.
+
+**Efecto Principal de B (Tiempo)**
+El tiempo (**B_tiempo**) tiene un efecto marginalmente significativo (\(p = 0.0556\)), lo que sugiere que la duración de la exposición (45 minutos o 1 hora) también afecta el cambio pupilar. Sin embargo, su influencia no es tan marcada como la del brillo.
+
+**Interacción A:B**
+La interacción entre brillo y tiempo (\(p = 0.5264\)) no resulta significativa. Esto significa que el efecto combinado de estos factores no difiere de lo que se esperaría de la suma de sus efectos individuales. En otras palabras, el impacto del brillo y el tiempo parece ser independiente.
+
+**Residuos**
+La variabilidad que no es explicada por los factores (\(SumSq = 0.0204\)) es bastante baja, lo que sugiere que el modelo ajusta los datos de manera adecuada. La mayor parte de las variaciones observadas en la respuesta pupilar están bien explicadas por los factores incluidos en el análisis.
+
+# Gráfico de Interacción: Fijando Niveles de Tiempo (B) y Variando Brillo (A)
+
+```{r}
+
+interaction.plot(x.factor = A,
+                 trace.factor = B, 
+                 response = r, 
+                 fun = mean,
+                 type = "b",
+                 col = c("black", "red", "green", "blue"),  # Colores
+                 pch = c(19, 17, 15, 13),                  # Símbolos
+                 fixed = TRUE,                             # Orden de factores
+                 leg.bty = "o")
+```
+
+
+El gráfico muestra cómo el cambio pupilar (\(r\)) varía con el brillo (\(A\)) para cada nivel fijo del tiempo (\(B\)):
+
+1. **Cuando el tiempo es largo (\(B = 0\)):**  
+   - La línea negra indica que, para tiempo largo, el cambio pupilar es más negativo a medida que el brillo aumenta (\(A = 1\)).  
+   - Esto refleja que el brillo alto causa una contracción significativa incluso con mayor duración del experimento.
+
+2. **Cuando el tiempo es corto (\(B = 1\)):**  
+   - La línea roja muestra que, para tiempo corto, el cambio pupilar es cercano a 0 con brillo bajo (\(A = 0\)) y se vuelve mucho más negativo con brillo alto (\(A = 1\)).  
+   - La mayor pendiente sugiere que, en tiempos cortos, el cambio pupilar es más sensible al brillo.
+
+3. **Comparación entre niveles de tiempo:**  
+   - La pendiente de la línea roja (\(B = 1\)) es más pronunciada que la de la línea negra (\(B = 0\)), lo que sugiere que el efecto del brillo es ligeramente más fuerte con tiempos cortos. Sin embargo, en ambos niveles de tiempo, el brillo alto tiene un impacto negativo claro.
+
+4. **Interacción entre A y B:**  
+   - Las líneas no se cruzan, lo que confirma que no hay una interacción significativa entre el brillo y el tiempo. Esto implica que el efecto del brillo es consistente independientemente del nivel de tiempo.
+
+### Conclusión
+El brillo alto (\(A = 1\)) provoca una disminución significativa en el cambio pupilar (\(r\)) en ambos niveles de tiempo, lo que indica una contracción pupilar más marcada con mayor intensidad lumínica. Sin embargo, la mayor pendiente en tiempos cortos (\(B = 1\)) sugiere que la diferencia entre brillo bajo y alto es más notable en exposiciones breves, probablemente porque en tiempos largos el ojo ya está más fatigado y menos sensible a la variación en el brillo.
+
+
+
+
+
+# Gráfico de Interacción: Fijando Niveles de Brillo (A) y Variando Tiempo (B)
+
+```{r}
+
+interaction.plot(x.factor = B,
+                 trace.factor = A, 
+                 response = r, 
+                 fun = mean,
+                 type = "b",
+                 col = c("black", "red", "green", "blue"),  # Colores
+                 pch = c(19, 17, 15, 13),                  # Símbolos
+                 fixed = TRUE,                             # Orden de factores
+                 leg.bty = "o")
+```
+
+
+En este gráfico se observa cómo el cambio pupilar (\(r\)) varía con el tiempo (\(B\)) para cada nivel fijo del brillo (\(A\)):
+
+1. **Cuando el brillo es bajo (\(A = 0\)):**  
+   - La línea negra muestra que, para brillo bajo, el cambio pupilar tiende a ser cercano a cero (\(r \approx 0\)) tanto en tiempos cortos (\(B = 1\)) como largos (\(B = 0\)).
+   - Este comportamiento sugiere que, bajo brillo bajo, el tiempo de exposición tiene un impacto limitado sobre el cambio pupilar.
+
+2. **Cuando el brillo es alto (\(A = 1\)):**  
+   - La línea roja indica que, para brillo alto, el cambio pupilar (\(r\)) es siempre negativo, lo que refleja una contracción pupilar.  
+   - Además, la pendiente sugiere que, aunque el cambio pupilar es negativo en ambos casos, es menos pronunciado cuando el tiempo es corto (\(B = 1\)).
+
+3. **Comparación entre niveles de brillo:**  
+   - Para brillo bajo (\(A = 0\)), el tiempo tiene poco efecto, ya que el cambio pupilar permanece estable.  
+   - Para brillo alto (\(A = 1\)), el tiempo tiene un impacto más evidente, con una contracción más marcada en exposiciones largas (\(B = 0\)).
+
+4. **Interacción entre A y B:**  
+   - Las líneas no son paralelas, lo que indica cierta dependencia entre el brillo y el tiempo. Sin embargo, no hay un cruce significativo, lo que implica que el efecto principal del brillo sigue siendo dominante.
+
+#### Conclusión
+El tiempo tiene un impacto más significativo cuando el brillo es alto (\(A = 1\)), ya que provoca una contracción pupilar mayor en exposiciones largas (\(B = 0\)). Por otro lado, con brillo bajo (\(A = 0\)), el cambio pupilar es prácticamente independiente del tiempo de exposición.
+
+
+
+
+```{r}
+# Librerías necesarias
+library(DoE.base)
+library(FrF2)
+```
+
+
+# Gráfico de Efectos Principales para \(r\)
+```{r}
+MEPlot(av) # Efectos principales de la librer?a FrF2
+
+```
+
+Este gráfico muestra el efecto principal de los factores **A (Brillo)** y **B (Tiempo)** sobre el cambio pupilar (\(r\)):
+
+**Factor A (Brillo):**
+- Se observa un cambio significativo en \(r\) al pasar de brillo bajo (\(A = 0\)) a brillo alto (\(A = 1\)).
+- Con \(A = 0\), el valor promedio de \(r\) es cercano a 0, indicando un impacto leve en el cambio pupilar.
+- Con \(A = 1\), el valor promedio de \(r\) es claramente negativo, reflejando una contracción pupilar marcada debido al brillo alto.
+- La pendiente pronunciada indica que el brillo tiene un efecto dominante sobre \(r\).
+
+**Factor B (Tiempo):**
+- Al pasar de tiempo largo (\(B = 0\)) a tiempo corto (\(B = 1\)), se observa un aumento en \(r\).
+- Para \(B = 0\), el cambio pupilar es más negativo, lo que sugiere mayor contracción pupilar en exposiciones largas.
+- Para \(B = 1\), el cambio pupilar es menos negativo, indicando una menor contracción en tiempos cortos.
+- La pendiente es menos pronunciada, lo que implica que el tiempo tiene un impacto menor en comparación con el brillo.
+
+#### Conclusión
+El brillo (\(A\)) tiene un efecto más significativo en el cambio pupilar que el tiempo (\(B\)). El brillo alto (\(A = 1\)) provoca una contracción pupilar marcada, mientras que la duración de la exposición (\(B\)) modula este efecto de manera más sutil. En general, el modelo confirma que el brillo es el factor principal que influye en la respuesta pupilar.
+
+
+
+# Matriz de Gráficos de Interacción para \(r\)
+
+```{r}
+IAPlot(av)
+```
+
+
+La matriz de gráficos de interacción muestra cómo los factores **A (Brillo)** y **B (Tiempo)** influyen en el cambio pupilar (\(r\)), evaluando sus efectos combinados y principales:
+
+**PANEL SUPERIOR IZQUIERDO (EFECTO DE \(A\) EN \(B = 0\))**  
+- Para tiempos largos (\(B = 0\)), se observa que el cambio pupilar es significativamente más negativo al aumentar el brillo (\(A = 1\)).
+- La línea descendente indica que el brillo tiene un impacto claro en condiciones de tiempo prolongado.
+
+**PANEL SUPERIOR DERECHO (EFECTO DE \(A\) EN \(B = 1\))**  
+- Para tiempos cortos (\(B = 1\)), el patrón es similar pero con una pendiente más leve. Esto sugiere que el impacto del brillo es menos pronunciado cuando el tiempo es más corto.
+
+**PANEL INFERIOR IZQUIERDO (EFECTO DE \(B\) EN \(A = 0\))**  
+- Para brillo bajo (\(A = 0\)), el cambio pupilar permanece cercano a 0, independientemente de la duración del tiempo. Esto indica que, en condiciones de baja intensidad lumínica, el tiempo tiene un efecto mínimo sobre \(r\).
+
+**PANEL INFERIOR DERECHO (EFECTO DE \(B\) EN \(A = 1\))**  
+- Para brillo alto (\(A = 1\)), se observa que el cambio pupilar es más negativo con tiempos largos (\(B = 0\)) y menos negativo con tiempos cortos (\(B = 1\)). Esto indica que el tiempo amplifica el impacto del brillo alto.
+
+### Conclusión
+- **Brillo (\(A\))**: Es el factor dominante, causando una contracción pupilar más marcada (\(r\) negativo) con brillo alto (\(A = 1\)) en ambas duraciones de tiempo.
+- **Tiempo (\(B\))**: Tiene un efecto modulador, siendo más notable cuando el brillo es alto (\(A = 1\)).
+- La interacción entre \(A\) y \(B\) no es significativa, pero sugiere que el brillo es el principal responsable del cambio pupilar, con el tiempo actuando como un factor secundario.
+
+
+```{r}
+par(mfrow=c(1,1)) # Par?metros gr?ficos iniciales
+
+boxplot(r ~ A, main = "Box plot diagram r vs A", col = "green", xlab = "A",
+        ylab = "Variable respuesta")
+```
+
+ **Boxplot \(r\) vs \(A\) (Brillo)**
+- En este gráfico se observa un **cambio notable en \(r\)** entre los niveles de brillo:
+  - **\(A = 0\) (Brillo bajo):** Los valores de \(r\) están mayormente concentrados alrededor de 0, con una mediana ligeramente positiva, indicando poca contracción pupilar o una dilatación leve.
+  - **\(A = 1\) (Brillo alto):** Los valores de \(r\) son claramente negativos, con una mediana cercana a -0.8, mostrando una contracción pupilar significativa.
+- Esto confirma que el brillo es un factor dominante que afecta directamente el cambio pupilar: el brillo alto causa contracción, mientras que el brillo bajo mantiene la pupila más estable.
+
+
+```{r}
+boxplot(r ~ B, main = "Box plot diagram r vs B", col = "green", xlab = "B",
+        ylab = "Variable respuesta")
+```
+
+**Boxplot \(r\) vs \(B\) (Tiempo)**
+- El gráfico muestra diferencias menos pronunciadas en \(r\) entre los niveles de tiempo:
+  - **\(B = 0\) (Tiempo largo):** Los valores de \(r\) son más negativos, con una mediana alrededor de -0.6, lo que sugiere que tiempos largos inducen una contracción pupilar moderada.
+  - **\(B = 1\) (Tiempo corto):** Los valores de \(r\) son menos negativos y la mediana está cercana a -0.4, indicando una contracción pupilar menos severa.
+- El tiempo tiene un efecto más leve en comparación con el brillo, pero aún así influye: tiempos más largos tienden a aumentar la contracción pupilar.
+
+
+### Conclusión Box plot
+- **El brillo (\(A\))** tiene un impacto más fuerte que el tiempo (\(B\)) sobre el cambio pupilar. El brillo alto provoca contracciones pupilares claras, mientras que el brillo bajo mantiene la pupila estable.
+- **El tiempo (\(B\))** modula el cambio pupilar de manera más sutil. Tiempos largos están asociados a una mayor contracción pupilar, pero el efecto es menos pronunciado que el del brillo.
+
+
+
+
+
+
+
+
+
+
+
